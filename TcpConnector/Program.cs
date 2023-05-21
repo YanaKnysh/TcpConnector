@@ -24,6 +24,16 @@ Console.WriteLine("Press spacebar to stop");
 
 TcpConnector tcpConnector = new TcpConnector();
 tcpConnector.Listen("127.0.0.1", 1000);
+
+//ConsoleKeyInfo c;
+//do
+//{
+//    c = Console.ReadKey();
+//} while (c.Key != ConsoleKey.Spacebar);
+
+//tcpConnector.isListening = false;
+//Environment.Exit(0);
+
 //var userInput = Console.ReadKey();
 
 //while (userInput.Key != ConsoleKey.Spacebar) 

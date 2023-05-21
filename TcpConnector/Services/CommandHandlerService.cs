@@ -21,19 +21,9 @@ namespace Listener.Services
 
             // Translate data bytes to a ASCII string.
             data = Encoder.DecodeMessage(command, byteCount);
-            Console.WriteLine("Received: {0}", data);
+            Console.WriteLine(Message.FormMessage(data, true));
 
             // Process the data sent by the client.
-            //data = data.ToUpper();
-
-            //byte[] msg = Encoder.EncodeMessage(data);
-
-
-
-            // Send back a response.
-            //_stream.Write(msg, 0, msg.Length);
-            //Console.WriteLine("Sent: {0}", data);
-
             if (data.StartsWith(Command.Print))
             {
                 var labelName = data.Substring(5);
@@ -44,13 +34,13 @@ namespace Listener.Services
                     isPrinting = false;
                     byte[] response = Encoder.EncodeMessage(Response.PrintDone);
                     _stream.Write(response, 0, response.Length);
-                    Console.WriteLine("Sent: {0}", Response.PrintDone);
+                    Console.WriteLine(Message.FormMessage(Response.PrintDone, false));
                 }
                 else
                 {
                     byte[] response = Encoder.EncodeMessage(Response.WrongLabel);
                     _stream.Write(response, 0, response.Length);
-                    Console.WriteLine("Sent: {0}", Response.WrongLabel);
+                    Console.WriteLine(Message.FormMessage(Response.WrongLabel, false));
                 }
             }
             else if (data == Command.GetStatus)
@@ -59,20 +49,20 @@ namespace Listener.Services
                 {
                     byte[] response = Encoder.EncodeMessage(Response.Printing);
                     _stream.Write(response, 0, response.Length);
-                    Console.WriteLine("Sent: {0}", Response.Printing);
+                    Console.WriteLine(Message.FormMessage(Response.Printing, false));
                 }
                 else
                 {
                     byte[] response = Encoder.EncodeMessage(Response.Idle);
                     _stream.Write(response, 0, response.Length);
-                    Console.WriteLine("Sent: {0}", Response.Idle);
+                    Console.WriteLine(Message.FormMessage(Response.Idle, false));
                 }
             }
             else
             {
                 byte[] response = Encoder.EncodeMessage(Response.UnknowCommand);
                 _stream.Write(response, 0, response.Length);
-                Console.WriteLine("Sent: {0}", Response.UnknowCommand);
+                Console.WriteLine(Message.FormMessage(Response.UnknowCommand, false));
             }
         }
     }

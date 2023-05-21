@@ -15,14 +15,14 @@ namespace Sender
                 NetworkStream stream = client.GetStream();
                 stream.Write(data, 0, data.Length);
 
-                Console.WriteLine("Sent: {0}", message);
+                Console.WriteLine(Message.FormMessage(message, true));
 
                 data = new byte[256];
                 string responseData = string.Empty;
 
                 int bytes = stream.Read(data, 0, data.Length);
                 responseData = Encoder.DecodeMessage(data, bytes);
-                Console.WriteLine("Received: {0}", responseData);
+                Console.WriteLine(Message.FormMessage(responseData, false));
             }
             catch (ArgumentNullException e)
             {
