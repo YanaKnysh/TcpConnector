@@ -19,11 +19,17 @@ using Microsoft.Extensions.Hosting;
 //        }
 //}
 
-// Program
-Console.WriteLine("Press spacebar to stop");
+internal class Program
+{
+        public static async Task Main()
+        {
+            Console.WriteLine("Press spacebar to stop");
 
-TcpConnector tcpConnector = new TcpConnector();
-tcpConnector.Listen("127.0.0.1", 1000);
+            TcpConnector tcpConnector = new TcpConnector("127.0.0.1", 1000);
+            await tcpConnector.Listen();
+    }
+}
+
 
 //ConsoleKeyInfo c;
 //do

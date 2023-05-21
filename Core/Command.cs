@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class Command
+    public static class Command
     {
         public const string Print = "Print";
         public const string GetStatus = "GetStatus";

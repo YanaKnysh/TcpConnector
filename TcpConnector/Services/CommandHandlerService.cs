@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace Listener.Services
 {
-    public class CommandHandlerService : ICommandService
+    public class CommandHandlerService : ICommandHandlerService
     {
         private NetworkStream _stream;
         private bool isPrinting;
@@ -15,13 +15,11 @@ namespace Listener.Services
             isPrinting = false;
         }
 
-        public void HandleRequest(byte[] command, int byteCount)
+        public async Task HandleRequest(byte[] command, int byteCount, string ipAddress, int port)
         { 
-            string data = null;
+            string data;
 
-            // Translate data bytes to a ASCII string.
             data = Encoder.DecodeMessage(command, byteCount);
-            Console.WriteLine(Message.FormMessage(data, true));
 
             // Process the data sent by the client.
             if (data.StartsWith(Command.Print))
@@ -30,17 +28,17 @@ namespace Listener.Services
                 if (labelName != null && Label.labels.Contains(labelName))
                 {
                     isPrinting = true;
-                    Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     isPrinting = false;
                     byte[] response = Encoder.EncodeMessage(Response.PrintDone);
-                    _stream.Write(response, 0, response.Length);
-                    Console.WriteLine(Message.FormMessage(Response.PrintDone, false));
+                    await _stream.WriteAsync(response, 0, response.Length);
+                    Console.WriteLine(MessageFormatter.FormMessage(Response.PrintDone, ipAddress, port, false));
                 }
                 else
                 {
                     byte[] response = Encoder.EncodeMessage(Response.WrongLabel);
-                    _stream.Write(response, 0, response.Length);
-                    Console.WriteLine(Message.FormMessage(Response.WrongLabel, false));
+                    await _stream.WriteAsync(response, 0, response.Length);
+                    Console.WriteLine(MessageFormatter.FormMessage(Response.WrongLabel, ipAddress, port, false));
                 }
             }
             else if (data == Command.GetStatus)
@@ -48,21 +46,21 @@ namespace Listener.Services
                 if (isPrinting)
                 {
                     byte[] response = Encoder.EncodeMessage(Response.Printing);
-                    _stream.Write(response, 0, response.Length);
-                    Console.WriteLine(Message.FormMessage(Response.Printing, false));
+                    await _stream.WriteAsync(response, 0, response.Length);
+                    Console.WriteLine(MessageFormatter.FormMessage(Response.Printing, ipAddress, port, false));
                 }
                 else
                 {
                     byte[] response = Encoder.EncodeMessage(Response.Idle);
-                    _stream.Write(response, 0, response.Length);
-                    Console.WriteLine(Message.FormMessage(Response.Idle, false));
+                    await _stream.WriteAsync(response, 0, response.Length);
+                    Console.WriteLine(MessageFormatter.FormMessage(Response.Idle, ipAddress, port, false));
                 }
             }
             else
             {
                 byte[] response = Encoder.EncodeMessage(Response.UnknowCommand);
-                _stream.Write(response, 0, response.Length);
-                Console.WriteLine(Message.FormMessage(Response.UnknowCommand, false));
+                await _stream.WriteAsync(response, 0, response.Length);
+                Console.WriteLine(MessageFormatter.FormMessage(Response.UnknowCommand, ipAddress, port, false));
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Core
 {
-    public class Encoder
+    public static class Encoder
     {
         public static byte[] EncodeMessage(string message)
         {

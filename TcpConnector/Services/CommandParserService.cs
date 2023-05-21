@@ -13,11 +13,11 @@ namespace Listener.Services
             this.listener = listener;
         }
 
-        public void ParseCommand()
+        public async Task ParseCommand(string ipAddress, int port)
         {
             byte[] bytes = new byte[256];
 
-            using TcpClient client = listener.AcceptTcpClient();
+            using TcpClient client = await listener.AcceptTcpClientAsync();
 
             Console.WriteLine("Connected!");
 
@@ -26,7 +26,7 @@ namespace Listener.Services
             int i;
 
             // Loop to receive all the data sent by the client.
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            while ((i = await stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
             {
                 int startPosition = -1;
                 int endPosition = -1;
@@ -35,10 +35,6 @@ namespace Listener.Services
                     if (bytes[j] == Wrapper.Start)
                     {
                         startPosition = j;
-                    }
-                    else if (bytes[j] == Wrapper.Start && startPosition != -1) 
-                    {
-                        // throw Exception?
                     }
                     else if (bytes[j] == Wrapper.End && startPosition != -1)
                     {
@@ -50,7 +46,7 @@ namespace Listener.Services
                         var commandArray = new byte[bytes.Length - 2];
                         Array.Copy(bytes, startPosition, commandArray, 0, j);
                         CommandHandlerService commandService = new CommandHandlerService(stream);
-                        commandService.HandleRequest(commandArray, endPosition + 1);
+                        await commandService.HandleRequest(commandArray, endPosition + 1, ipAddress, port);
                         startPosition = -1;
                         endPosition = -1;
                     }

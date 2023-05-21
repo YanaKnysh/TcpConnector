@@ -7,20 +7,23 @@ namespace Listener
     public class TcpConnector
     {
         public bool isListening {  get; set; }
+        private TcpListener server;
+        private string ipAddress;
+        private int port;
 
-        public TcpConnector()
+        public TcpConnector(string ipAddress, int port)
         {
             isListening = true;
+            this.ipAddress = ipAddress;
+            this.port = port;
+            IPAddress localAddr = IPAddress.Parse(ipAddress);
+            server = new TcpListener(localAddr, port);
         }
 
-        public void Listen(string ipAdress, int port) 
+        public async Task Listen() 
         {
-            TcpListener server = null;
             try
             {
-                IPAddress localAddr = IPAddress.Parse(ipAdress);
-
-                server = new TcpListener(localAddr, port);
                 server.Start();
 
                 while (isListening)
@@ -28,7 +31,7 @@ namespace Listener
                     Console.Write("Waiting for a connection... ");
 
                     CommandParserService commandParserService = new CommandParserService(server);
-                    commandParserService.ParseCommand();
+                    await commandParserService.ParseCommand(ipAddress, port);
                     
                 }
             }
@@ -40,6 +43,12 @@ namespace Listener
             {
                 server?.Stop();
             }
+        }
+
+        public void Stop()
+        {
+            server.Stop();
+            isListening = false;
         }
     }
 }

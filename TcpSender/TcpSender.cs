@@ -5,24 +5,26 @@ namespace Sender
 {
     public class TcpSender
     {
-        public static void Connect(string server, int port, string message)
+        public static async Task Connect(string server, int port, string message)
         {
             try
             {
                 using TcpClient client = new TcpClient(server, port);
 
+                //Encoder encoder = new Encoder();
                 byte[] data = Encoder.EncodeMessage(message);
                 NetworkStream stream = client.GetStream();
-                stream.Write(data, 0, data.Length);
+                await stream.WriteAsync(data, 0, data.Length);
 
-                Console.WriteLine(Message.FormMessage(message, true));
+                //MessageFormatter messageFormatter = new MessageFormatter();
+                Console.WriteLine(MessageFormatter.FormMessage(message, server, port, true));
 
                 data = new byte[256];
                 string responseData = string.Empty;
 
-                int bytes = stream.Read(data, 0, data.Length);
+                int bytes = await stream.ReadAsync(data, 0, data.Length);
                 responseData = Encoder.DecodeMessage(data, bytes);
-                Console.WriteLine(Message.FormMessage(responseData, false));
+                Console.WriteLine(MessageFormatter.FormMessage(responseData, server, port, false));
             }
             catch (ArgumentNullException e)
             {

@@ -1,9 +1,7 @@
-﻿using System.Net.Sockets;
-
-namespace Listener.Interfaces
+﻿namespace Listener.Interfaces
 {
     public interface ICommandParserService
     {
-        void ParseCommand();
+        Task ParseCommand(string ipAddress, int port);
     }
 }
