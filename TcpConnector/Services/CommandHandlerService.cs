@@ -6,7 +6,7 @@ namespace Listener.Services
 {
     public class CommandHandlerService : ICommandHandlerService
     {
-        private NetworkStream _stream;
+        private readonly NetworkStream _stream;
         private bool isPrinting;
 
         public CommandHandlerService(NetworkStream networkStream)

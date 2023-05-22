@@ -11,12 +11,10 @@ namespace Sender
             {
                 using TcpClient client = new TcpClient(server, port);
 
-                //Encoder encoder = new Encoder();
                 byte[] data = Encoder.EncodeMessage(message);
                 NetworkStream stream = client.GetStream();
                 await stream.WriteAsync(data, 0, data.Length);
 
-                //MessageFormatter messageFormatter = new MessageFormatter();
                 Console.WriteLine(MessageFormatter.FormMessage(message, server, port, true));
 
                 data = new byte[256];
